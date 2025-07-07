@@ -6,6 +6,6 @@ import com.bytebites.auth_service.dto.AuthResponse;
 import com.bytebites.auth_service.models.User;
 
 public interface AuthService {
-    User register(RegisterRequest registerRequest);
+    UserResponse register(RegisterRequest registerRequest);
     AuthResponse login(LoginRequest loginRequest);
 }
