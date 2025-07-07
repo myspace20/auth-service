@@ -4,9 +4,11 @@ package com.bytebites.auth_service.controllers;
 import com.bytebites.auth_service.dto.AuthResponse;
 import com.bytebites.auth_service.dto.LoginRequest;
 import com.bytebites.auth_service.dto.RegisterRequest;
+import com.bytebites.auth_service.dto.UserResponse;
 import com.bytebites.auth_service.models.User;
 import com.bytebites.auth_service.services.AuthService;
 import jakarta.validation.Valid;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,12 +25,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public User register(@Valid  @RequestBody RegisterRequest registerRequest) {
-        return authService.register(registerRequest);
+    public ResponseEntity<UserResponse> register(@Valid  @RequestBody RegisterRequest registerRequest) {
+        return ResponseEntity.ok(authService.register(registerRequest));
     }
 
     @PostMapping("/login")
-    public AuthResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-        return authService.login(loginRequest);
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest loginRequest) {
+        return ResponseEntity.ok(authService.login(loginRequest));
     }
 }

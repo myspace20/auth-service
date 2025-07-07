@@ -1,13 +1,12 @@
 package com.bytebites.auth_service.services;
 
-import com.bytebites.auth_service.dto.AuthResult;
-import com.bytebites.auth_service.dto.LoginRequest;
+import com.bytebites.auth_service.dto.*;
 import com.bytebites.auth_service.exceptions.ResourceExistsException;
-import com.bytebites.auth_service.dto.RegisterRequest;
-import com.bytebites.auth_service.dto.AuthResponse;
 import com.bytebites.auth_service.exceptions.ResourceNotFound;
 import com.bytebites.auth_service.infrastructure.RoleRepository;
 import com.bytebites.auth_service.infrastructure.UserRepository;
+import com.bytebites.auth_service.mappers.AuthMapper;
+import com.bytebites.auth_service.mappers.UserMapper;
 import com.bytebites.auth_service.models.AppUser;
 import com.bytebites.auth_service.models.Role;
 import com.bytebites.auth_service.models.User;
@@ -31,21 +30,25 @@ public class AuthServiceImpl implements AuthService {
     private final RoleRepository roleRepository;
     private final AuthenticationManager authenticationManager;
     private final JWTUtil jwtUtil;
+    private final  UserMapper userMapper;
+    private final AuthMapper authMapper;
 
 
-    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil) {
+    public AuthServiceImpl(UserRepository userRepository, PasswordEncoder bCryptPasswordEncoder, RoleRepository roleRepository, AuthenticationManager authenticationManager, JWTUtil jwtUtil, UserMapper userMapper, AuthMapper authMapper) {
         this.userRepository = userRepository;
         this.bCryptPasswordEncoder = bCryptPasswordEncoder;
         this.roleRepository = roleRepository;
         this.authenticationManager = authenticationManager;
         this.jwtUtil = jwtUtil;
+        this.userMapper = userMapper;
+        this.authMapper = authMapper;
     }
 
     @Override
-    public User register(RegisterRequest registerRequest) {
+    public UserResponse register(RegisterRequest registerRequest) {
         checkExistingUser(registerRequest.email());
         checkExistingRole(registerRequest.role());
-        return createUser(registerRequest);
+        return userMapper.toUserResponse(createUser(registerRequest));
     }
 
     @Override
@@ -57,10 +60,10 @@ public class AuthServiceImpl implements AuthService {
                 authentication.getId(),
                 authenticatedUser.roles()
         );
-        return new AuthResponse(
+        return authMapper.toAuthResponse(new AuthResponse(
                 authenticatedUser.authentication().getName(),
                 accessToken
-        );
+        ));
     }
 
     private void checkExistingUser(String email){
